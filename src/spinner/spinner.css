@@ -32,3 +32,8 @@
   transform-origin: 0 0; /* see note above */
 }
 .ldio-qhdjhvthusd div { box-sizing: content-box; }
+.wrapper-spinner{
+    display: flex;
+    justify-content: center;
+    padding-top: 50px;
+}
