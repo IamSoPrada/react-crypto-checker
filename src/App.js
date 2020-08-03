@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactPaginate from "react-paginate";
 import Spinner from "./spinner/spinner";
 import Table from "./table/table";
+import TableSearch from "./tableSearch/tablesearch";
 import DetailRowView from "./detailrowview/DetailRowView";
 import _ from "lodash";
 import "./App.css"
@@ -17,7 +18,8 @@ export default class App extends Component {
         sort: "asc", // desc
         sortField: "id",
         row: null,
-        currentPage: 0
+        currentPage: 0,
+        search: ""
     }
 
 
@@ -50,21 +52,40 @@ export default class App extends Component {
         })
     }
     
+
     pageChangeHandler = ({selected}) => {
         this.setState({currentPage: selected})
         console.log(selected)
     }
+
+    searchHandler = search => {
+        this.setState({search, currentPage: 0})
+    }
+
+    getFilteredData(){
+        const {data, search } = this.state;
+        if(!search){
+            return data;
+
+        }
+        return data.filter(item => {
+            return item["name"].toLowerCase().includes(search.toLowerCase()) ||  item["symbol"].toLowerCase().includes(search.toLowerCase())
+            
+        })
+    }
     render() {
-        const pageSize = 50;
-        const displayData = _.chunk(this.state.data, pageSize)[this.state.currentPage]
+        const pageSize = 10;
+        const filteredData = this.getFilteredData();
+        const pageCount = Math.ceil(filteredData.length / pageSize);
+        const displayData = _.chunk(filteredData, pageSize)[this.state.currentPage]
         return (
             <div className="container d-flex flex-column">
                 {
-                    this.state.isLoading ? <Spinner /> : <Table data={displayData}
+                    this.state.isLoading ? <Spinner /> : <React.Fragment><TableSearch onSearch = {this.searchHandler} className="wrapper-search" /> <Table data={displayData}
                     onSort={this.onSort} 
                     sort = {this.state.sort}
                     sortField = {this.state.sortField}
-                    onRowSelect = {this.onRowSelect}/>
+                    onRowSelect = {this.onRowSelect}/></React.Fragment>
 
                 }
                 {
@@ -74,7 +95,7 @@ export default class App extends Component {
                     nextLabel={'>'}
                     breakLabel={'...'}
                     breakClassName={'break-me'}
-                    pageCount={10}
+                    pageCount={pageCount}
                     marginPagesDisplayed={2}
                     pageRangeDisplayed={5}
                     onPageChange={this.pageChangeHandler}
