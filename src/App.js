@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactPaginate from "react-paginate";
 import Spinner from "./spinner/spinner";
 import Table from "./table/table";
+import Header from "./header/header";
 import TableSearch from "./tableSearch/tablesearch";
 import DetailRowView from "./detailrowview/DetailRowView";
 import _ from "lodash";
@@ -31,7 +32,6 @@ export default class App extends Component {
             isLoading: false,
             data: _.orderBy(data.data, this.state.sortField, this.state.sort)
         })
-        console.log(data.data);
     }
     
     onSort = sortField => {
@@ -52,7 +52,11 @@ export default class App extends Component {
         })
     }
     
-
+    onToggleCard = (row) => {
+        this.setState({
+            row: !row
+        })
+    }
     pageChangeHandler = ({selected}) => {
         this.setState({currentPage: selected})
         console.log(selected)
@@ -73,13 +77,19 @@ export default class App extends Component {
             
         })
     }
+
     render() {
         const pageSize = 10;
         const filteredData = this.getFilteredData();
         const pageCount = Math.ceil(filteredData.length / pageSize);
         const displayData = _.chunk(filteredData, pageSize)[this.state.currentPage]
         return (
-            <div className="container d-flex flex-column">
+            <div className="container d-flex flex-column align-items-center">
+                
+                <Header title="CRYPTOCURRENCY CHECKER" />
+                {
+                    this.state.row ? <DetailRowView onToggleCard={this.onToggleCard} coin={this.state.row}/> : null
+                }
                 {
                     this.state.isLoading ? <Spinner /> : <React.Fragment><TableSearch onSearch = {this.searchHandler} className="wrapper-search" /> <Table data={displayData}
                     onSort={this.onSort} 
@@ -88,6 +98,7 @@ export default class App extends Component {
                     onRowSelect = {this.onRowSelect}/></React.Fragment>
 
                 }
+            
                 {
                 this.state.data.length > pageSize ?
                 <ReactPaginate 
@@ -110,9 +121,7 @@ export default class App extends Component {
                     forcePage={this.state.currentPage}
               /> : null
                 }
-                {
-                    this.state.row ? <DetailRowView coin={this.state.row}/> : null
-                }
+                
             </div>
         )
     }

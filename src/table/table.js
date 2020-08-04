@@ -5,7 +5,7 @@ const newDataArr = props.data;
     return (
         
         <table className="table">
-            <thead>
+            <thead >
                 <tr>
                     <th onClick={props.onSort.bind(null,"id")}>ID {props.sortField === "id" ? <small>{props.sort}</small> : null }  </th>
                     <th onClick={props.onSort.bind(null,"symbol")}>Symbol {props.sortField === "symbol" ? <small>{props.sort}</small> : null }</th>
