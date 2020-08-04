@@ -24,7 +24,17 @@ export default class App extends Component {
     }
 
 
-    async componentDidMount() {
+    componentDidMount() {
+        this.updateAllCoins();
+        this.timerId = setInterval(this.updateAllCoins, 30000);
+    }
+    
+    componentWillUnmount() {
+        clearInterval(this.timerId);
+    }
+    
+
+    updateAllCoins = async () => {
         const response = await fetch(`${this._apiBase}`);
         const data = await response.json();
 
