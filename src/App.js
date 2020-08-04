@@ -24,17 +24,7 @@ export default class App extends Component {
     }
 
 
-    componentDidMount() {
-        this.updateAllCoins();
-        this.timerId = setInterval(this.updateAllCoins, 30000);
-    }
-    
-    componentWillUnmount() {
-        clearInterval(this.timerId);
-    }
-    
-
-    updateAllCoins = async () => {
+    async componentDidMount() {
         const response = await fetch(`${this._apiBase}`);
         const data = await response.json();
 
@@ -43,6 +33,8 @@ export default class App extends Component {
             data: _.orderBy(data.data, this.state.sortField, this.state.sort)
         })
     }
+
+    
     
     onSort = sortField => {
         const clonedData = this.state.data.concat();
